@@ -1,17 +1,8 @@
-// Tâches affichées au démarrage de l'application
-const tasks = [
-  { title: "Préparer le cours DevOps", done: true },
-  { title: "Corriger les TP", done: false },
-  { title: "Préparer la séance 2", done: false },
-  { title: "Préparer la séance 2", done: false },
-  { title: "Apprendre Git et GitHub", done: false }
-];
-
+const tasks = defaultTasks();
 const list = document.getElementById("task-list");
 const form = document.getElementById("task-form");
 const input = document.getElementById("task-input");
 
-// Affiche toutes les tâches dans la page
 function render() {
   list.innerHTML = "";
   tasks.forEach(function (task, index) {
@@ -20,33 +11,31 @@ function render() {
     box.type = "checkbox";
     box.checked = task.done;
     box.addEventListener("change", function () {
-      tasks[index].done = box.checked;
+      toggleTask(tasks, index);
       render();
     });
-
     const label = document.createElement("span");
     label.textContent = task.title;
+    if (task.done) label.className = "done";
     
-    if (task.done) {
-      label.className = "done";
-    }
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.textContent = "Supprimer";
+    remove.addEventListener("click", function () {
+      removeTask(tasks, index);
+      render();
+    });
     
     item.appendChild(box);
     item.appendChild(label);
+    item.appendChild(remove);
     list.appendChild(item);
   });
 }
-
-// Ajoute une tâche lorsque le formulaire est envoyé
 form.addEventListener("submit", function (event) {
   event.preventDefault();
-  const title = input.value.trim();
-  if (title === "") {
-    return;
-  }
-  tasks.push({ title: title, done: false });
+  addTask(tasks, input.value);
   input.value = "";
   render();
 });
-
 render();
